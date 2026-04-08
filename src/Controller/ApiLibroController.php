@@ -12,9 +12,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
-
-
-
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/api', name: 'app_api_')]
 final class ApiLibroController extends AbstractController
@@ -73,7 +71,44 @@ final class ApiLibroController extends AbstractController
         } else {
             return $this->json(['error' => 'El campo titulo es obligatorio'], 400);
         }
+    }
+
+    #[Route('/libros/v', name: 'libro_create_validacion_symf', methods: ['POST'])]
+
+    public function createLibroConValidacion(
+        Request $request,
+        ValidatorInterface $validator,
+        EntityManagerInterface $em
+    ): JsonResponse {
+        $data = json_decode($request->getContent(), true);
+        if ($data === null) {
+            return $this->json(["error" => 'Invalid JSON'], 400);
+        }
+
+        if (!isset($data["titulo"])) {
+            return $this->json(["error" => 'Invalid JSON'], 400);
+        }
+        
+        $libro = new Libro();
+        $libro->setTitulo($data['titulo'] ?? null);
 
 
+        $errors = $validator->validate($libro);
+
+        if (count($errors) > 0) {
+            $formattedErrors = [];
+            foreach ($errors as $error) {
+                $formattedErrors[$error->getPropertyPath()] = $error->getMessage();
+            }
+            return $this->json([
+                'error' => 'Validation failed',
+                'fields' => $formattedErrors
+            ], 400);
+        }
+
+        $em->persist($libro);
+        $em->flush();
+
+        return $this->json($libro, 201);
     }
 }
