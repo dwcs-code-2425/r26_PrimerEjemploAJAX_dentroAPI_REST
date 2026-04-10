@@ -88,7 +88,7 @@ final class ApiLibroController extends AbstractController
         if (!isset($data["titulo"])) {
             return $this->json(["error" => 'Invalid JSON'], 400);
         }
-        
+
         $libro = new Libro();
         $libro->setTitulo($data['titulo'] ?? null);
 
@@ -110,5 +110,52 @@ final class ApiLibroController extends AbstractController
         $em->flush();
 
         return $this->json($libro, 201);
+    }
+
+
+    #[Route('/libros/{id}', name: 'libro_update', methods: ['PUT'])]
+
+    public function updateLibro( int $id, LibroRepository $repo,
+        Request $request,
+        ValidatorInterface $validator,
+        EntityManagerInterface $em
+    ): JsonResponse {
+
+        $libro = $repo->find($id);
+
+        if (!$libro) {
+            return $this->json(['error' => 'Libro not found'], 404);
+        }
+
+        $data = json_decode($request->getContent(), true);
+        if ($data === null) {
+            return $this->json(["error" => 'Invalid JSON'], 400);
+        }
+
+        if (!isset($data["titulo"])) {
+            return $this->json(["error" => 'Invalid JSON'], 400);
+        }
+
+       
+        $libro->setTitulo($data['titulo'] ?? null);
+
+
+        $errors = $validator->validate($libro);
+
+        if (count($errors) > 0) {
+            $formattedErrors = [];
+            foreach ($errors as $error) {
+                $formattedErrors[$error->getPropertyPath()] = $error->getMessage();
+            }
+            return $this->json([
+                'error' => 'Validation failed',
+                'fields' => $formattedErrors
+            ], 400);
+        }
+
+      
+        $em->flush();
+
+        return $this->json($libro, 200);
     }
 }
