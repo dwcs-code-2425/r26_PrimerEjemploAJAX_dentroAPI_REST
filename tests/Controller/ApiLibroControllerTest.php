@@ -2,6 +2,7 @@
 
 namespace App\Tests\Controller;
 
+use App\Repository\LibroRepository;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
@@ -9,6 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 class ApiLibroControllerTest extends WebTestCase
 {
     private ?KernelBrowser $client;
+    private LibroRepository $libroRepository;
 
     protected function setUp(): void
     {
@@ -16,7 +18,7 @@ class ApiLibroControllerTest extends WebTestCase
         $this->client = static::createClient();
 
         // Desde el contenedor se pueden cargar otras clases: repositorios, servicios,etc.
-        // $libroRepository = $this->client->getContainer()->get(LibroRepository::class);
+         $this->libroRepository = $this->client->getContainer()->get(LibroRepository::class);
         // $entityManager = $this->client->getContainer()->get('doctrine')->getManager();
     }
 
@@ -48,6 +50,13 @@ class ApiLibroControllerTest extends WebTestCase
         $this->assertArrayHasKey('id', $content);
         $this->assertEquals('Libro test', $content['titulo']);
         $this->assertEquals('Descripcion válida de prueba', $content['descripcion']);
+
+        $libro = $this->libroRepository->find($content['id']);
+
+        $this->assertNotNull($libro);
+        $this->assertEquals('Libro test', $libro->getTitulo());
+        $this->assertEquals('Descripcion válida de prueba',$libro->getDescripcion() );
+
     }
 
 
