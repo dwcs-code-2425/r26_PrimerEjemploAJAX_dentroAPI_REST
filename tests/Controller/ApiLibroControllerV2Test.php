@@ -7,7 +7,7 @@ use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
-class ApiLibroControllerTest extends WebTestCase
+class ApiLibroControllerV2Test extends WebTestCase
 {
     private ?KernelBrowser $client;
     private LibroRepository $libroRepository;
@@ -33,7 +33,7 @@ class ApiLibroControllerTest extends WebTestCase
     {
         $this->client->request(
             'POST',
-            '/api/libros',
+            '/api/v2/libros',
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
@@ -64,7 +64,7 @@ class ApiLibroControllerTest extends WebTestCase
     {
         $this->client->request(
             'POST',
-            '/api/libros',
+            '/api/v2/libros',
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
@@ -87,7 +87,7 @@ class ApiLibroControllerTest extends WebTestCase
     {
         $this->client->request(
             'POST',
-            '/api/libros',
+            '/api/v2/libros',
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
@@ -105,7 +105,7 @@ class ApiLibroControllerTest extends WebTestCase
     {
         $this->client->request(
             'POST',
-            '/api/libros',
+            '/api/v2/libros',
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
@@ -129,7 +129,7 @@ class ApiLibroControllerTest extends WebTestCase
 
         $this->client->request(
             'POST',
-            '/api/libros',
+            '/api/v2/libros',
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
@@ -143,7 +143,7 @@ class ApiLibroControllerTest extends WebTestCase
     {
 
 
-        $this->client->request('GET', '/api/libros');
+        $this->client->request('GET', '/api/v2/libros');
 
         $this->assertResponseIsSuccessful();
     }
@@ -155,7 +155,7 @@ class ApiLibroControllerTest extends WebTestCase
         // primero crear uno
         $this->client->request(
             'POST',
-            '/api/libros',
+            '/api/v2/libros',
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
@@ -173,7 +173,7 @@ class ApiLibroControllerTest extends WebTestCase
         // PATCH
         $this->client->request(
             'PATCH',
-            "/api/libros/$id",
+            "/api/v2/libros/$id",
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
@@ -193,7 +193,7 @@ class ApiLibroControllerTest extends WebTestCase
         // primero crear uno
         $this->client->request(
             'POST',
-            '/api/libros',
+            '/api/v2/libros',
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
@@ -211,7 +211,7 @@ class ApiLibroControllerTest extends WebTestCase
         // PATCH
         $this->client->request(
             'PATCH',
-            "/api/libros/$id",
+            "/api/v2/libros/$id",
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
@@ -242,7 +242,7 @@ class ApiLibroControllerTest extends WebTestCase
         // primero crear uno
         $this->client->request(
             'POST',
-            '/api/libros',
+            '/api/v2/libros',
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
@@ -260,7 +260,7 @@ class ApiLibroControllerTest extends WebTestCase
         // PATCH
         $this->client->request(
             'PATCH',
-            "/api/libros/$id",
+            "/api/v2/libros/$id",
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
@@ -291,7 +291,7 @@ class ApiLibroControllerTest extends WebTestCase
         // primero crear uno
         $this->client->request(
             'POST',
-            '/api/libros',
+            '/api/v2/libros',
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
@@ -309,7 +309,7 @@ class ApiLibroControllerTest extends WebTestCase
         // PUT
         $this->client->request(
             'PUT',
-            "/api/libros/$id",
+            "/api/v2/libros/$id",
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
@@ -340,7 +340,7 @@ class ApiLibroControllerTest extends WebTestCase
         // primero crear uno
         $this->client->request(
             'POST',
-            '/api/libros',
+            '/api/v2/libros',
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
@@ -358,7 +358,7 @@ class ApiLibroControllerTest extends WebTestCase
         // PUT
         $this->client->request(
             'PUT',
-            "/api/libros/$id",
+            "/api/v2/libros/$id",
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
@@ -381,7 +381,7 @@ class ApiLibroControllerTest extends WebTestCase
 
         $this->client->request(
             'POST',
-            '/api/libros',
+            '/api/v2/libros',
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
@@ -394,7 +394,7 @@ class ApiLibroControllerTest extends WebTestCase
         $content = json_decode($this->client->getResponse()->getContent(), true);
         $id = $content['id'];
 
-        $this->client->request('DELETE', "/api/libros/$id");
+        $this->client->request('DELETE', "/api/v2/libros/$id");
 
         $this->assertResponseStatusCodeSame(204);
     }

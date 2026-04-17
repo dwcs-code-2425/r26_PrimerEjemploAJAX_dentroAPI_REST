@@ -18,8 +18,8 @@ use Symfony\Component\Validator\Constraints\Json;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-#[Route('/api', name: 'app_api_')]
-final class ApiLibroController extends AbstractController
+#[Route('/api/v2', name: 'app_api_v2')]
+final class ApiLibroControllerV2 extends AbstractController
 {
 
     const MIN_LENGTH_TITULO = 2;
@@ -63,30 +63,6 @@ final class ApiLibroController extends AbstractController
 
 
 
-    // //Crear libro
-    // #[Route('/libros', name: 'libros_create', methods: ['POST'])]
-    // public function create(Request $request, EntityManagerInterface $em): JsonResponse
-    // {
-    //     $data = json_decode($request->getContent(), true);
-    //     if ($data === null) {
-    //         return $this->json(['error' => 'Invalid JSON'], 400);
-    //     }
-    //     if (array_key_exists("titulo", $data) && !empty(trim($data["titulo"]))) {
-    //         $libro = new Libro();
-    //$libro->setTitulo ($this->trimOrNull($data['titulo'] ?? null));
-     
-    //    if(array_key_exists("descripcion", $data)){
-    //     $libro->setDescripcion($this->trimOrNull($data['descripcion'] ?? null));
-    //    }
-
-    //         $em->persist($libro);
-    //         $em->flush();
-
-    //         return $this->json($libro, 201);
-    //     } else {
-    //         return $this->json(['error' => 'El campo titulo es obligatorio'], 400);
-    //     }
-    // }
     #[Route('/libros', name: 'libro_create_validacion_symf', methods: ['POST'])]
 
     public function createLibroConValidacion(
@@ -99,10 +75,10 @@ final class ApiLibroController extends AbstractController
         if ($data === null) {
             return $this->json(["error" => 'Invalid JSON'], Response::HTTP_BAD_REQUEST);
         }
-        $error = $this->formatResponseOnInvalidFields($data, "titulo", 'Invalid JSON');
-        if ($error) {
-            return $this->json($error, Response::HTTP_BAD_REQUEST);
-        }
+        // $error = $this->formatResponseOnInvalidFields($data, "titulo", 'Invalid JSON');
+        // if ($error) {
+        //     return $this->json($error, Response::HTTP_BAD_REQUEST);
+        // }
 
         // $error = $this->formatResponseOnInvalidFields($data, "descripcion", 'Invalid JSON');
         // if ($error) {
@@ -120,7 +96,7 @@ final class ApiLibroController extends AbstractController
 
 
 
-        $errors = $validator->validate($libro);
+        $errors = $validator->validate($libro, null, ["create"]);
 
         if (count($errors) > 0) {
             $formatArray = $this->formatInvalidErrorList($errors);
@@ -156,15 +132,15 @@ final class ApiLibroController extends AbstractController
             return $this->json(["error" => 'Invalid JSON'], Response::HTTP_BAD_REQUEST);
         }
 
-        $error = $this->formatResponseOnInvalidFields($data, "titulo", 'Invalid JSON');
-        if ($error) {
-            return $this->json($error, Response::HTTP_BAD_REQUEST);
-        }
+        // $error = $this->formatResponseOnInvalidFields($data, "titulo", 'Invalid JSON');
+        // if ($error) {
+        //     return $this->json($error, Response::HTTP_BAD_REQUEST);
+        // }
 
-        $error = $this->formatResponseOnInvalidFields($data, "descripcion", 'Invalid JSON');
-        if ($error) {
-            return $this->json($error, Response::HTTP_BAD_REQUEST);
-        }
+        // $error = $this->formatResponseOnInvalidFields($data, "descripcion", 'Invalid JSON');
+        // if ($error) {
+        //     return $this->json($error, Response::HTTP_BAD_REQUEST);
+        // }
 
 
         //Aplicamos trim() a los campos string para evitar que se envíen valores con espacios en blanco al inicio o al final
@@ -174,7 +150,7 @@ final class ApiLibroController extends AbstractController
 
         $libro->setDescripcion($this->trimOrNull($data['descripcion'] ?? null));
 
-        $errors = $validator->validate($libro);
+        $errors = $validator->validate($libro, null, ["replace"]);
 
         if (count($errors) > 0) {
             $formatArray = $this->formatInvalidErrorList($errors);
@@ -193,57 +169,7 @@ final class ApiLibroController extends AbstractController
     }
 
 
-    // #[Route('/libros/{id}', name: 'libro_update_partial', methods: ['PATCH'])]
 
-    // public function updateParcialLibro(
-    //     int $id,
-    //     LibroRepository $repo,
-    //     Request $request,
-    //     EntityManagerInterface $em
-    // ): JsonResponse {
-
-    //     $libro = $repo->find($id);
-
-    //     if (!$libro) {
-    //         return $this->json(['error' => 'Libro not found'], Response::HTTP_NOT_FOUND);
-    //     }
-
-    //     $data = json_decode($request->getContent(), true);
-    //     if ($data === null) {
-    //         return $this->json(["error" => 'Invalid JSON'],  Response::HTTP_BAD_REQUEST);
-    //     }
-
-
-
-    //     if (array_key_exists("titulo", $data)) {
-    //         try {
-    //             $titulo = $this->validateFieldString("titulo",  self::MIN_LENGTH_TITULO, self::MAX_LENGTH_TITULO, $data);
-    //             $libro->setTitulo($titulo);
-    //         } catch (Exception $ex) {
-    //             return $this->json(["error" => $ex->getMessage()],  Response::HTTP_BAD_REQUEST);
-    //         }
-    //     }
-
-    //     if (array_key_exists("descripcion", $data)) {
-    //         try {
-    //             $descripcion = $this->validateFieldString(
-    //                 "descripcion",
-    //                 self::MIN_LENGTH_DESC,
-    //                 self::MAX_LENGTH_DESC,
-    //                 $data
-    //             );
-    //             $libro->setDescripcion($descripcion);
-    //         } catch (Exception $ex) {
-    //             return $this->json(["error" => $ex->getMessage()], Response::HTTP_BAD_REQUEST);
-    //         }
-    //     }
-
-
-
-    //     $em->flush();
-
-    //     return $this->json($libro, 200);
-    // }
 
     #[Route('/libros/{id}', name: 'libro_update_partial_validacion', methods: ['PATCH'])]
 
@@ -255,7 +181,7 @@ final class ApiLibroController extends AbstractController
         EntityManagerInterface $em
     ): JsonResponse {
 
-      
+
 
 
 
@@ -273,15 +199,14 @@ final class ApiLibroController extends AbstractController
 
 
         if (array_key_exists("titulo", $data)) {
-           $libro->setTitulo($this->trimOrNull($data['titulo'] ?? null));
-
+            $libro->setTitulo($this->trimOrNull($data['titulo'] ?? null));
         }
 
         if (array_key_exists("descripcion", $data)) {
-          $libro->setDescripcion($this->trimOrNull($data['descripcion'] ?? null));
+            $libro->setDescripcion($this->trimOrNull($data['descripcion'] ?? null));
         }
 
-        $errors = $validator->validate($libro);
+        $errors = $validator->validate($libro, null, ["update"]);
 
         if (count($errors) > 0) {
             $formatArray = $this->formatInvalidErrorList($errors);
@@ -294,31 +219,6 @@ final class ApiLibroController extends AbstractController
         return $this->json($libro, Response::HTTP_OK);
     }
 
-    // private function validateFieldString(string $fieldName, int $min, int $max, array $data): ?string
-    // {
-    //     if (array_key_exists($fieldName, $data)) {
-
-    //Ojo! trim(null) ="" (cadena vacía), lo que podría causar problemas de validación si el campo permite valores nulos. 
-
-
-    // if($data[$fieldName] === null){
-//     return null;
-// }
-
-    //         $value = trim($data[$fieldName]);
-    //         if (!empty($value)) {
-
-    //             if (strlen($value) >= $min  && strlen($value) <= $max) {
-    //                 return $value;
-    //             } else {
-    //                 throw new Exception("El campo $fieldName debe tener al menos " . $min . " caracteres y " .
-    //                     "no puede superar " . $max . " caracteres");
-    //             }
-    //         }
-    //     }
-
-    //     throw new Exception("El campo $fieldName es obligatorio");
-    // }
 
     private function formatInvalidErrorList(ConstraintViolationListInterface $errors): array
     {
@@ -336,22 +236,21 @@ final class ApiLibroController extends AbstractController
         return [];
     }
 
-    private function formatResponseOnInvalidFields(array $data, string $fieldName, string $message)
-    {
-        //Para permitir que un campo exista y su valor sea null, en lugar de  !isset($data[$fieldName])  se puede usar array_key_exists para validar solo la existencia de la clave en el array, sin importar su valor (null, vacío, etc.)
-        //if (!isset($data[$fieldName])) {
-        if (!array_key_exists($fieldName, $data)) {
-            return ["error" => $message];
-        }
-    }
+    // private function formatResponseOnInvalidFields(array $data, string $fieldName, string $message)
+    // {
+    //     //Para permitir que un campo exista y su valor sea null, en lugar de  !isset($data[$fieldName])  se puede usar array_key_exists para validar solo la existencia de la clave en el array, sin importar su valor (null, vacío, etc.)
+    //     //if (!isset($data[$fieldName])) {
+    //     if (!array_key_exists($fieldName, $data)) {
+    //         return ["error" => $message];
+    //     }
+    // }
 
     private function trimOrNull(mixed $value): ?string
-{
-    if ($value === null) {
-        return null;
+    {
+        if ($value === null) {
+            return null;
+        }
+
+        return trim($value);
     }
-
-    return trim($value);
-}
-
 }

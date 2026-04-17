@@ -15,22 +15,24 @@ class Libro
     private ?int $id = null;
     #[ORM\Column(length: 255)]
 
-    #[Assert\NotBlank(message: "El título es obligatorio", normalizer:"trim")]
-     #[Assert\Length(
+    #[Assert\NotBlank(message: "El título es obligatorio", normalizer: "trim", groups: ["create", "replace"])]
+    #[Assert\Length(
         min: 2,
         max: 10,
         minMessage: "El título debe tener al menos {{ limit }} caracteres",
-        maxMessage: "El título no puede superar {{ limit }} caracteres"
+        maxMessage: "El título no puede superar {{ limit }} caracteres",
+        groups: ["create", "update", "replace"]
     )]
     private ?string $titulo = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-     //#[Assert\NotBlank(message: "La descripción es obligatoria", normalizer:"trim", allowNull: true)]
-     #[Assert\Length(
+    #[Assert\NotBlank(message: "La descripción es obligatoria", normalizer: "trim", allowNull: true, groups: ["replace"])]
+    #[Assert\Length(
         min: 10,
         max: 255,
         minMessage: "La descripción debe tener al menos {{ limit }} caracteres",
-        maxMessage: "La descripción no puede superar {{ limit }} caracteres"
+        maxMessage: "La descripción no puede superar {{ limit }} caracteres",
+        groups: ["create", "update", "replace"]
     )]
     private ?string $descripcion = null;
 
@@ -44,7 +46,7 @@ class Libro
         return $this->titulo;
     }
 
-    public function setTitulo(string $titulo): static
+    public function setTitulo(?string $titulo): static
     {
         $this->titulo = $titulo;
 
